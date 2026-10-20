@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#14213D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kita">
+<title>Kita – plan it, join it, remember it</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+/* NFR21: all design tokens live here */
+:root{--bg:#F2F4F8;--card:#fff;--ink:#14213D;--mute:#58647F;--line:#DDE2EC;--acc:#3D5AFE;--onacc:#fff;--tag:#FFD23F;--bad:#C62828;--r:16px;--g:16px;--f:'Bricolage Grotesque',system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1424;--card:#172038;--ink:#EEF1FA;--mute:#9AA6C4;--line:#2A3556;--acc:#7C92FF;--onacc:#0E1424;--bad:#FF8A80}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.5 var(--f);padding:env(safe-area-inset-top) 0 0}
+main{max-width:640px;margin:0 auto;padding:var(--g) var(--g) calc(96px + env(safe-area-inset-bottom))}
+h1,h2,h3{line-height:1.15;margin:.2em 0 .5em}h2{font-size:1.7rem;font-weight:800}h3{font-size:1.1rem;font-weight:600}
+p{margin:.3em 0}.mute{color:var(--mute)}.pre{white-space:pre-wrap}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.btn,.btn2,.link,.seg button{min-height:44px;min-width:44px;border-radius:12px;padding:0 18px;border:2px solid var(--acc)}
+.btn{background:var(--acc);color:var(--onacc);font-weight:600}
+.btn2{background:transparent;color:var(--acc);font-weight:600;display:inline-flex;align-items:center;text-decoration:none}
+.link{background:none;border:0;color:var(--acc);text-decoration:underline;padding:0 8px}
+button:disabled{opacity:.5;cursor:not-allowed}
+label{display:block;margin:12px 0;font-weight:600}
+input:not([type=file]),textarea{display:block;width:100%;min-height:44px;margin-top:4px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+.card{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0;color:inherit;text-decoration:none}
+.card.off{opacity:.6}
+.tile{flex:none;width:58px;height:64px;border-radius:12px;background:var(--tag);color:#14213D;display:grid;place-content:center;text-align:center;font-size:.8rem;line-height:1.1}
+.tile b{font-size:1.7rem;font-weight:800}
+.pill{display:inline-block;background:var(--bad);color:var(--bg);padding:2px 10px;border-radius:99px;font-size:.85rem;font-weight:600}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.seg button{background:transparent;color:var(--ink);border-color:var(--line);padding:0 6px}
+.seg button.on{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.th{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--line)}
+.th>button:first-child{all:unset;display:block;width:100%;height:100%;cursor:pointer}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th .x,.th .cc{position:absolute;right:4px;top:4px;min-width:44px;min-height:44px;border:0;border-radius:99px;background:#000a;color:#fff;font-weight:600}
+.th .cc{top:auto;bottom:4px;right:4px;min-width:32px;min-height:32px;display:grid;place-content:center;font-size:.8rem;padding:0 8px;pointer-events:none}
+.empty{text-align:center;padding:40px 16px}
+.av{width:64px;height:64px;border-radius:50%;object-fit:cover;background:var(--tag);color:#14213D;display:grid;place-content:center;font-size:1.6rem;font-weight:800;flex:none}
+.who{display:flex;gap:14px;align-items:center}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--card);border-top:1px solid var(--line);padding:0 4px env(safe-area-inset-bottom)}
+nav button{min-height:56px;background:none;border:0;color:var(--mute);font-weight:600;font-size:.82rem}
+nav button.on{color:var(--acc);box-shadow:inset 0 3px var(--acc)}
+.hero{font-size:clamp(3.4rem,18vw,6rem);font-weight:800;letter-spacing:-.04em;line-height:.95;margin:20px 0 12px}
+.hero span{background:var(--tag);color:#14213D;padding:0 .12em;border-radius:.12em}
+.lede{font-size:1.15rem;color:var(--mute);margin-bottom:24px}
+#viewer{position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.vbox{max-width:640px;margin:0 auto;padding:var(--g)}
+.vbox>img{width:100%;max-height:60vh;object-fit:contain;background:#000;border-radius:var(--r);cursor:zoom-in}
+.vbox>img.full{position:fixed;inset:0;max-height:none;height:100%;border-radius:0;z-index:60;cursor:zoom-out}
+.cm{list-style:none;padding:0}.cm li{padding:8px 0;border-bottom:1px solid var(--line)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;z-index:70;max-width:90%}
+[hidden]{display:none!important}
+summary{min-height:44px;display:flex;align-items:center;color:var(--acc);font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav aria-label="Main" hidden></nav>
+<div id="viewer" hidden role="dialog" aria-modal="true" aria-label="Photo"></div>
+<div id="toast" role="status" hidden></div>
+<script>
+/* ---- 1. CONFIG: paste your Supabase project values (Settings > API) ---- */
+const CFG={URL:'https://sipzafrbbmvaswyykjqz.supabase.co',KEY:'sb_publishable_QXjnAY1hq2IBuYl--A-FdQ_4c_oSdSa'};
+
+/* ---- 2. helpers ---- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); // NFR13
+const fmt=d=>new Date(d).toLocaleString([],{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}); // NFR20
+const S={user:null,me:null,tab:'feed',aid:null,edit:null,mode:'in',acts:[],pics:[],v:null,vc:[],mod:false,rep:[]};
+const U=()=>S.user?.id;
+let tt;const toast=m=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,4000)};
+const run=async p=>{const{data,error}=await p;if(error)throw error;return data};
+
+if(CFG.URL.startsWith('YOUR')){document.body.innerHTML='<main><h2>Almost there</h2><p>Open index.html and paste your Supabase URL and anon key into CFG.</p></main>';throw 0}
+const sb=supabase.createClient(CFG.URL,CFG.KEY);
+
+/* ---- 3. data layer (NFR22): the only code that talks to the backend ---- */
+const db={
+ acts:()=>sb.from('activities').select('*,profiles(name),responses(user_id,answer,profiles(name)),pictures(id,path,uploader_id)'),
+ pics:()=>sb.from('pictures').select('*,activities(title,starts_at,host_id,profiles(name)),comments(id)').order('created_at',{ascending:false}),
+ me:()=>sb.from('profiles').select('*').eq('id',U()).single(),
+ comments:id=>sb.from('comments').select('*,profiles(name)').eq('picture_id',id).order('created_at'),
+ url:p=>sb.storage.from('pics').getPublicUrl(p).data.publicUrl
+};
+async function load(){
+ if(!S.user)return;
+ const[a,p,m]=await Promise.all([db.acts(),db.pics(),db.me()]);
+ if(a.error||p.error)return toast((a.error||p.error).message);
+ S.acts=a.data;S.pics=p.data;S.me=m.data;
+ if(S.tab!=='new'&&!document.activeElement?.closest('form'))render(); // keep what the user is typing (NFR15)
+}
+let liveOn=0,lt;function live(){if(liveOn++)return;sb.channel('live').on('postgres_changes',{event:'*',schema:'public'},()=>{clearTimeout(lt);lt=setTimeout(load,400)}).subscribe()} // NFR9
+
+async function shrink(f){const b=await createImageBitmap(f),k=Math.min(1,1280/b.width),c=document.createElement('canvas');c.width=b.width*k;c.height=b.height*k;c.getContext('2d').drawImage(b,0,0,c.width,c.height);return new Promise(r=>c.toBlob(r,'image/jpeg',.75))} // FR17, NFR8
+async function upload(aid,files){
+ const fs=[...files].filter(f=>f.type.startsWith('image/')&&f.size<2e7).slice(0,6); // FR16, NFR12
+ if(!fs.length)throw Error('Choose image files under 20 MB.');
+ for(const f of fs){const path=`${U()}/${aid}/${crypto.randomUUID()}.jpg`;await run(sb.storage.from('pics').upload(path,await shrink(f),{contentType:'image/jpeg'}));await run(sb.from('pictures').insert({activity_id:aid,path}))}
+ toast(fs.length+(fs.length===1?' photo added.':' photos added.'));
+}
+
+/* ---- 4. views ---- */
+const T=[['feed','Activities'],['new','New'],['gallery','Gallery'],['mine','Mine'],['profile','Profile']];
+const cnt=(a,k)=>a.responses.filter(r=>r.answer===k).length;
+const empty=(t,d,v,b)=>`<div class="empty"><h3>${t}</h3><p class="mute">${d}</p><button class="btn" data-a="tab" data-v="${v}">${b}</button></div>`;
+const av=p=>p?.avatar_url?`<img class="av" src="${esc(p.avatar_url)}" alt="">`:`<span class="av" aria-hidden="true">${esc((p?.name||'?')[0])}</span>`;
+const local=i=>{const d=new Date(i);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
+
+function authView(){const m=S.mode,up=m==='up',rs=m==='reset';
+return `<main><img src="icon-192.png" alt="" width="72" height="72" style="border-radius:16px;margin-top:24px"><h1 class="hero"><span>Who’s</span> in?</h1><p class="lede">Plan something, see who’s coming, keep the photos.</p>
+<form data-f="auth">${up?'<label>Display name<input name="name" required maxlength="40" autocomplete="name"></label>':''}
+<label>Email<input name="email" type="email" required autocomplete="email"></label>
+${rs?'':`<label>Password<input name="password" type="password" required minlength="8" autocomplete="${up?'new':'current'}-password"></label>`}
+<button class="btn" type="submit" style="width:100%">${rs?'Send reset link':up?'Create account':'Log in'}</button></form>
+${rs?'':'<p style="margin-top:12px"><button class="btn2" style="width:100%;justify-content:center" data-a="google">Continue with Google</button></p>'}
+<p>${up||rs?'<button class="link" data-a="mode" data-v="in">Log in instead</button>':'<button class="link" data-a="mode" data-v="up">Create an account</button><button class="link" data-a="mode" data-v="reset">Forgot password?</button>'}</p></main>`}
+
+function card(a){const d=new Date(a.starts_at),x=a.status==='cancelled';
+return `<a class="card${x?' off':''}" href="#/a/${a.id}"><div class="tile"><b>${d.getDate()}</b>${d.toLocaleString([],{month:'short'})}</div><div><h3>${esc(a.title)}</h3><p class="mute">${fmt(d)}${a.place?', '+esc(a.place):''}</p><p>${x?'<span class="pill">Cancelled</span>':cnt(a,'join')+' joining'}</p></div></a>`}
+
+function thumbs(a,manage){if(!a.pictures.length)return'';const adm=S.me?.is_admin;
+return `<div class="grid">${a.pictures.map(p=>`<div class="th"><button data-a="view" data-v="${p.id}"><img loading="lazy" src="${db.url(p.path)}" alt="Photo from ${esc(a.title)}"></button>${manage&&(a.host_id===U()||p.uploader_id===U()||adm)?`<button class="x" data-a="rmpic" data-v="${p.id}" aria-label="Remove photo">×</button>`:''}</div>`).join('')}</div>`}
+const addBtn=a=>`<label class="btn2">Add photos<input type="file" accept="image/*" multiple hidden data-up="${a.id}"></label>`;
+
+function feed(){const n=Date.now(),t=a=>+new Date(a.starts_at),u=S.acts.filter(a=>t(a)>=n).sort((a,b)=>t(a)-t(b)),p=S.acts.filter(a=>t(a)<n).sort((a,b)=>t(b)-t(a));
+return `<h2>Activities</h2>`+(S.acts.length?(u.length?u.map(card).join(''):'<p class="mute">Nothing coming up.</p>')+(p.length?'<h3>Past</h3>'+p.map(card).join(''):''):empty('No activities yet','Post the first one and invite people.','new','Post an activity'))}
+
+function detail(){
+ const a=S.acts.find(x=>x.id===S.aid);
+ if(!a)return `<button class="link" data-a="tab" data-v="feed">Back to activities</button>${empty('Activity not found','It may have been deleted.','feed','See activities')}`;
+ const d=new Date(a.starts_at),my=a.responses.find(r=>r.user_id===U())?.answer,host=a.host_id===U(),adm=S.me?.is_admin,x=a.status==='cancelled',j=a.responses.filter(r=>r.answer==='join'),past=d<Date.now(),full=a.capacity&&j.length>=a.capacity&&my!=='join';
+ const z=v=>new Date(v).toISOString().replace(/[-:]|\.\d{3}/g,''),end=new Date(+d+72e5);
+ const g=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(a.title)}&dates=${z(d)}/${z(end)}&location=${encodeURIComponent(a.place||'')}`;
+ return `<button class="link" data-a="tab" data-v="feed">Back to activities</button><h2>${esc(a.title)}</h2>${x?'<p><span class="pill">Cancelled</span></p>':''}
+<p><b>${fmt(d)}</b></p><p class="mute">${a.place?esc(a.place)+'. ':''}Hosted by ${esc(a.profiles?.name)}</p><p class="pre">${esc(a.details)}</p>
+${x?'':`<div class="seg" role="group" aria-label="Your response">${[['join','Joining'],['maybe','Maybe'],['no','Can’t go']].map(([k,l])=>`<button class="${my===k?'on':''}" data-a="rsvp" data-v="${k}" data-id="${a.id}" ${k==='join'&&full?'disabled':''}>${l}</button>`).join('')}</div>${full?'<p class="mute">This activity is full.</p>':''}`}
+<p>${j.length}${a.capacity?' of '+a.capacity:''} joining, ${cnt(a,'no')} can’t go, ${cnt(a,'maybe')} maybe</p>
+${j.length?`<p class="mute">${j.map(r=>esc(r.profiles?.name)).join(', ')}</p>`:''}
+${my==='join'&&!x?`<p><button class="btn2" data-a="ics" data-v="${a.id}">Add to calendar (.ics)</button> <a class="btn2" target="_blank" rel="noopener" href="${g}">Google Calendar</a></p>`:''}
+<p><button class="btn2" data-a="share">Share link</button> ${host||adm?`<button class="btn2" data-a="delact" data-v="${a.id}">Delete</button>`:''}</p>
+${host&&!x?`<p><button class="btn2" data-a="edit" data-v="${a.id}">Edit</button> <button class="btn2" data-a="cancel" data-v="${a.id}">Cancel activity</button></p>`:''}
+<h3>Photos</h3>${a.pictures.length?'':'<p class="mute">No photos yet.</p>'}${thumbs(a,true)}${host||(past&&my==='join')?addBtn(a):''}`}
+
+function form(){const a=S.edit||{};
+return `<h2>${a.id?'Edit activity':'New activity'}</h2><form data-f="act">
+<label>Title<input name="title" required maxlength="80" value="${esc(a.title)}"></label>
+<label>Date and time<input type="datetime-local" name="when" required value="${a.starts_at?local(a.starts_at):''}"></label>
+<label>Place<input name="place" maxlength="120" value="${esc(a.place)}"></label>
+<label>Details<textarea name="details" rows="4" maxlength="1000">${esc(a.details)}</textarea></label>
+<label>Capacity (optional)<input type="number" name="cap" min="1" inputmode="numeric" value="${a.capacity||''}"></label>
+${a.id?'':'<label>Photos (up to 6)<input type="file" name="files" accept="image/*" multiple></label>'}
+<button class="btn" type="submit" style="width:100%">${a.id?'Save changes':'Post activity'}</button></form>`}
+
+function gallery(){return `<h2>Gallery</h2>`+(S.pics.length?`<div class="grid">${S.pics.map(p=>`<div class="th"><button data-a="view" data-v="${p.id}"><img loading="lazy" src="${db.url(p.path)}" alt="Photo from ${esc(p.activities?.title)}"></button><span class="cc" aria-label="${p.comments.length} comments">${p.comments.length}</span></div>`).join('')}</div>`:empty('No photos yet','Open an activity and add the first photo.','feed','See activities'))}
+
+function mine(){const h=S.acts.filter(a=>a.host_id===U()).sort((a,b)=>new Date(b.starts_at)-new Date(a.starts_at));
+return `<h2>Mine</h2>`+(h.length?h.map(a=>card(a)+thumbs(a,true)+addBtn(a)).join(''):empty('You haven’t hosted anything yet','Post an activity and it will show up here.','new','Post an activity'))}
+
+function profile(){const m=S.me||{},u=U(),h=S.acts.filter(a=>a.host_id===u),j=S.acts.filter(a=>a.responses.some(r=>r.user_id===u&&r.answer==='join')),wp=a=>card(a)+thumbs(a,false);
+return `<div class="who">${av(m)}<div><h2 style="margin:0">${esc(m.name)}</h2><p class="mute">${h.length} hosted, ${j.length} joined</p></div></div>
+<details><summary>Edit profile</summary><form data-f="prof"><label>Display name<input name="name" required maxlength="40" value="${esc(m.name)}"></label><label>Photo (optional)<input type="file" name="photo" accept="image/*"></label><button class="btn" type="submit">Save changes</button></form></details>
+${m.is_admin?'<p><button class="btn2" data-a="mod">Open moderation</button></p>':''}
+<h3>Hosted</h3>${h.map(wp).join('')||'<p class="mute">Nothing hosted yet.</p>'}<h3>Joined</h3>${j.map(wp).join('')||'<p class="mute">Nothing joined yet.</p>'}
+<p><button class="link" data-a="out">Log out</button></p>`}
+
+function modView(){return `<button class="link" data-a="tab" data-v="profile">Back to profile</button><h2>Moderation</h2>`+(S.rep.length?S.rep.map(r=>{const p=S.pics.find(x=>x.id===r.target_id);
+return `<div class="card" style="display:block"><p><b>Reported ${r.kind}</b>: ${esc(r.reason)}</p>${r.kind==='picture'?(p?`<div class="grid"><div class="th"><img src="${db.url(p.path)}" alt="Reported photo"></div></div>`:'<p class="mute">Photo already removed.</p>'):`<p class="pre">${esc(r.c?.text||'Comment already removed.')}</p>`}<button class="btn" data-a="resolve" data-v="${r.id}" data-rm="1">Remove ${r.kind}</button> <button class="btn2" data-a="resolve" data-v="${r.id}">Dismiss</button></div>`}).join(''):'<div class="empty"><h3>No reports</h3><p class="mute">Nothing needs review.</p></div>')}
+
+function render(){
+ const m=$('#app'),nav=$('nav');
+ if(!S.user){nav.hidden=true;m.innerHTML=authView();return}
+ nav.hidden=false;
+ nav.innerHTML=T.map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${S.tab===k&&!S.aid&&!S.mod?'on':''}" ${S.tab===k&&!S.aid?'aria-current="page"':''}>${l}</button>`).join('');
+ m.innerHTML='<main>'+(S.mod?modView():S.aid?detail():({feed,new:form,gallery,mine,profile})[S.tab]())+'</main>';
+}
+function drawV(){const el=$('#viewer');if(!S.v){el.hidden=true;el.innerHTML='';return}
+ const p=S.v,a=p.activities||{};el.hidden=false;
+ el.innerHTML=`<div class="vbox"><button class="link" data-a="closev">Close</button><img data-a="zoom" src="${db.url(p.path)}" alt="Photo from ${esc(a.title)}"><h3><a href="#/a/${p.activity_id}" data-a="closev">${esc(a.title)}</a></h3><p class="mute">${fmt(a.starts_at)}, hosted by ${esc(a.profiles?.name)}</p><button class="link" data-a="report" data-k="picture" data-v="${p.id}">Report photo</button>
+ <h3>Comments</h3><ul class="cm">${S.vc.map(c=>`<li><b>${esc(c.profiles?.name)}</b> ${esc(c.text)} ${c.user_id===U()||S.me?.is_admin?`<button class="link" data-a="delc" data-v="${c.id}">Delete</button>`:''}<button class="link" data-a="report" data-k="comment" data-v="${c.id}">Report</button></li>`).join('')||'<li class="mute">No comments yet. Say something nice.</li>'}</ul>
+ <form data-f="cm"><input name="text" required maxlength="500" placeholder="Write a comment" aria-label="Comment"><button class="btn" type="submit" style="margin-top:8px">Post comment</button></form></div>`}
+
+/* ---- 5. actions ---- */
+const go=t=>{S.tab=t;S.aid=null;S.edit=null;S.mod=false;history.replaceState(null,'',location.pathname);render();scrollTo(0,0)};
+const reload=async()=>{await load();render()};
+const A={
+ tab:t=>go(t.dataset.v),
+ mode:t=>{S.mode=t.dataset.v;render()},
+ google:()=>run(sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}})),
+ out:()=>sb.auth.signOut(),
+ rsvp:async t=>{await run(sb.from('responses').upsert({activity_id:t.dataset.id,user_id:U(),answer:t.dataset.v},{onConflict:'activity_id,user_id'}));await reload()},
+ share:async()=>{const u=location.href;try{navigator.share?await navigator.share({url:u}):(await navigator.clipboard.writeText(u),toast('Link copied.'))}catch{}},
+ ics:t=>{const a=S.acts.find(x=>x.id===t.dataset.v),z=v=>new Date(v).toISOString().replace(/[-:]|\.\d{3}/g,''),q=s=>String(s||'').replace(/[\\;,]/g,'\\$&').replace(/\n/g,'\\n');
+  const f=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Kita//EN','BEGIN:VEVENT','UID:'+a.id+'@kita','DTSTAMP:'+z(Date.now()),'DTSTART:'+z(a.starts_at),'DTEND:'+z(+new Date(a.starts_at)+72e5),'SUMMARY:'+q(a.title),'LOCATION:'+q(a.place),'DESCRIPTION:'+q(a.details),'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([f],{type:'text/calendar'}));l.download='activity.ics';l.click()},
+ edit:t=>{S.edit=S.acts.find(x=>x.id===t.dataset.v);S.tab='new';S.aid=null;history.replaceState(null,'',location.pathname);render()},
+ cancel:async t=>{if(!confirm('Cancel this activity? People who responded will see “Cancelled”.'))return;await run(sb.from('activities').update({status:'cancelled'}).eq('id',t.dataset.v));await reload()},
+ delact:async t=>{if(!confirm('Delete this activity and its photos?'))return;await run(sb.from('activities').delete().eq('id',t.dataset.v));go('feed');await load();render()},
+ rmpic:async t=>{if(!confirm('Remove this photo?'))return;const p=S.pics.find(x=>x.id===t.dataset.v);if(p)await sb.storage.from('pics').remove([p.path]);await run(sb.from('pictures').delete().eq('id',t.dataset.v));await reload()},
+ view:async t=>{S.v=S.pics.find(x=>x.id===t.dataset.v);if(!S.v)return;S.vc=await run(db.comments(S.v.id));drawV()},
+ closev:()=>{S.v=null;drawV()},
+ zoom:t=>t.classList.toggle('full'),
+ delc:async t=>{await run(sb.from('comments').delete().eq('id',t.dataset.v));S.vc=await run(db.comments(S.v.id));drawV()},
+ report:async t=>{const r=prompt('What’s wrong with this '+t.dataset.k+'?');if(!r)return;await run(sb.from('reports').insert({kind:t.dataset.k,target_id:t.dataset.v,reason:r.slice(0,300)}));toast('Reported. An admin will review it.')},
+ mod:async()=>{S.mod=true;const r=await run(sb.from('reports').select('*').order('created_at',{ascending:false})),ids=r.filter(x=>x.kind==='comment').map(x=>x.target_id),c=ids.length?await run(sb.from('comments').select('id,text').in('id',ids)):[];S.rep=r.map(x=>({...x,c:c.find(y=>y.id===x.target_id)}));render()},
+ resolve:async t=>{const r=S.rep.find(x=>x.id===t.dataset.v);
+  if(t.dataset.rm){if(r.kind==='comment')await run(sb.from('comments').delete().eq('id',r.target_id));else{const p=S.pics.find(x=>x.id===r.target_id);if(p)await sb.storage.from('pics').remove([p.path]);await run(sb.from('pictures').delete().eq('id',r.target_id))}}
+  await run(sb.from('reports').delete().eq('id',r.id));S.rep=S.rep.filter(x=>x.id!==r.id);await load();render()}
+};
+const F={
+ async auth(f){const v=Object.fromEntries(new FormData(f));
+  if(S.mode==='reset'){await run(sb.auth.resetPasswordForEmail(v.email,{redirectTo:location.origin+location.pathname}));return toast('Check your email for a reset link.')}
+  if(S.mode==='up'){const r=await run(sb.auth.signUp({email:v.email,password:v.password,options:{data:{name:v.name}}}));if(!r.session)toast('Check your email to confirm your account.')}
+  else await run(sb.auth.signInWithPassword({email:v.email,password:v.password}))},
+ async act(f){const v=new FormData(f),row={title:v.get('title').trim(),starts_at:new Date(v.get('when')).toISOString(),place:v.get('place').trim(),details:v.get('details').trim(),capacity:+v.get('cap')||null};
+  let id=S.edit?.id;
+  if(id)await run(sb.from('activities').update(row).eq('id',id));else id=(await run(sb.from('activities').insert(row).select('id').single())).id;
+  const fs=f.elements.files?.files;if(fs?.length)await upload(id,fs);
+  S.edit=null;S.tab='feed';await load();location.hash='/a/'+id;render()},
+ async cm(f){const t=new FormData(f).get('text').trim();if(!t)return;await run(sb.from('comments').insert({picture_id:S.v.id,text:t}));S.vc=await run(db.comments(S.v.id));drawV();load()},
+ async prof(f){const v=new FormData(f),ph=v.get('photo'),row={name:v.get('name').trim()};
+  if(ph&&ph.size){const path=`${U()}/avatar.jpg`;await run(sb.storage.from('pics').upload(path,await shrink(ph),{contentType:'image/jpeg',upsert:true}));row.avatar_url=db.url(path)+'?v='+Date.now()}
+  await run(sb.from('profiles').update(row).eq('id',U()));await reload();toast('Saved.')}
+};
+document.addEventListener('click',async e=>{const t=e.target.closest('[data-a]'),f=t&&A[t.dataset.a];if(!f)return;try{await f(t,e)}catch(x){toast(x.message)}});
+document.addEventListener('submit',async e=>{e.preventDefault();const f=e.target,b=f.querySelector('[type=submit]');b.disabled=true;try{await F[f.dataset.f](f)}catch(x){toast(x.message)}finally{b.disabled=false}}); // NFR16
+document.addEventListener('change',async e=>{const i=e.target;if(!i.dataset.up)return;try{await upload(i.dataset.up,i.files);await reload()}catch(x){toast(x.message)}i.value=''});
+const route=()=>{const m=location.hash.match(/^#\/a\/([\w-]+)/);S.aid=m?m[1]:null;if(S.aid){S.tab='feed';S.mod=false}S.edit=null;render();scrollTo(0,0)}; // FR10
+addEventListener('hashchange',route);
+
+sb.auth.onAuthStateChange((ev,s)=>{
+ S.user=s?.user||null;
+ if(ev==='PASSWORD_RECOVERY'){const p=prompt('Choose a new password (at least 8 characters)');if(p)sb.auth.updateUser({password:p}).then(r=>toast(r.error?r.error.message:'Password updated.'))}
+ setTimeout(async()=>{if(S.user){await load();live();route()}else render()},0);
+});
+</script>
+</body>
+</html>

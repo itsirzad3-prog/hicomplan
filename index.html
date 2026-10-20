@@ -67,6 +67,9 @@ input:not([type=file]),textarea{display:block;width:100%;min-height:44px;margin-
 nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:5px 4px env(safe-area-inset-bottom);z-index:20}
 nav button{min-height:54px;background:none;border:0;border-radius:12px;color:var(--mute);font-weight:700;font-size:.76rem}
 nav button.on{color:var(--acc);background:none;box-shadow:none}
+nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.68rem;padding:0 2px}
+nav button.plus,nav button.plus.on{color:var(--onacc)}
+nav button.plus svg{width:46px;height:46px;padding:11px;background:var(--acc);border-radius:50%}
 .hero{font-size:clamp(3.4rem,18vw,6rem);font-weight:800;letter-spacing:-.04em;line-height:.95;margin:20px 0 12px}
 .hero span{background:var(--tag);color:#14213D;padding:0 .12em;border-radius:.16em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .lede{font-size:1.15rem;color:var(--mute);margin-bottom:24px}
@@ -160,7 +163,12 @@ async function upload(aid,files){
 }
 
 /* ---- 4. views ---- */
-const T=[['feed','Activities'],['new','New'],['gallery','Gallery'],['mine','Mine'],['profile','Profile']];
+const IC={feed:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+gallery:'<rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 3.5 3L15 13l5 4.5"/>',
+new:'<path d="M12 5v14M5 12h14"/>',
+mine:'<path d="M9.5 6H20M9.5 12H20M9.5 18H20"/><path d="M3.8 6l1.2 1.2L7 5M3.8 12l1.2 1.2L7 11M3.8 18l1.2 1.2L7 17"/>',
+profile:'<circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c.8-3.8 3.8-5.8 7.5-5.8s6.7 2 7.5 5.8"/>'};
+const T=[['feed','Activities'],['gallery','Gallery'],['new','New activity'],['mine','My Activity'],['profile','Profile']];
 const cnt=(a,k)=>a.responses.filter(r=>r.answer===k).length;
 const empty=(t,d,v,b)=>`<div class="empty"><h3>${t}</h3><p class="mute">${d}</p><button class="btn" data-a="tab" data-v="${v}">${b}</button></div>`;
 const av=p=>p?.avatar_url?`<img class="av" src="${esc(p.avatar_url)}" alt="">`:`<span class="av" aria-hidden="true">${esc((p?.name||'?')[0])}</span>`;
@@ -213,7 +221,7 @@ ${a.id?'':'<label>Photos (up to 6)<input type="file" name="files" accept="image/
 function gallery(){return `<h2>Gallery</h2>`+(S.pics.length?`<div class="grid">${S.pics.map(p=>`<div class="th"><button data-a="view" data-v="${p.id}"><img loading="lazy" src="${db.url(p.path)}" alt="Photo from ${esc(p.activities?.title)}"></button><span class="cc" aria-label="${p.comments.length} comments">${p.comments.length}</span></div>`).join('')}</div>`:empty('No photos yet','Open an activity and add the first photo.','feed','See activities'))}
 
 function mine(){const h=S.acts.filter(a=>a.host_id===U()).sort((a,b)=>new Date(b.starts_at)-new Date(a.starts_at));
-return `<h2>Mine</h2>`+(h.length?h.map(a=>card(a)+thumbs(a,true)+addBtn(a)).join(''):empty('You haven’t hosted anything yet','Post an activity and it will show up here.','new','Post an activity'))}
+return `<h2>My Activity</h2>`+(h.length?h.map(a=>card(a)+thumbs(a,true)+addBtn(a)).join(''):empty('You haven’t hosted anything yet','Post an activity and it will show up here.','new','Post an activity'))}
 
 function profile(){const m=S.me||{},u=U(),h=S.acts.filter(a=>a.host_id===u),j=S.acts.filter(a=>a.responses.some(r=>r.user_id===u&&r.answer==='join')),wp=a=>card(a)+thumbs(a,false);
 return `<div class="who">${av(m)}<div><h2 style="margin:0">${esc(m.name)}</h2><p class="mute">${h.length} hosted, ${j.length} joined</p></div></div>
@@ -228,8 +236,8 @@ function render(){
  const m=$('#app'),nav=$('nav');
  if(!S.user){nav.hidden=true;m.innerHTML=authView();return}
  nav.hidden=false;
- nav.innerHTML=T.map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${S.tab===k&&!S.aid&&!S.mod?'on':''}" ${S.tab===k&&!S.aid?'aria-current="page"':''}>${l}</button>`).join('');
- m.innerHTML='<main><div class="brandbar"><div class="brandmark">HC</div><div class="brandcopy"><strong>Hi Com ing?</strong><span>HICOM COMMUNITY</span></div></div>'+(S.mod?modView():S.aid?detail():({feed,new:form,gallery,mine,profile})[S.tab]())+'</main>';
+ nav.innerHTML=T.map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${k==='new'?'plus ':''}${S.tab===k&&!S.aid&&!S.mod?'on':''}" ${k==='new'?`aria-label="${l}"`:''} ${S.tab===k&&!S.aid?'aria-current="page"':''}><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="${k==='new'?2.4:1.8}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>${k==='new'?'':`<span>${l}</span>`}</button>`).join('');
+ m.innerHTML='<main>'+(S.mod?modView():S.aid?detail():({feed,new:form,gallery,mine,profile})[S.tab]())+'</main>';
 }
 function drawV(){const el=$('#viewer');if(!S.v){el.hidden=true;el.innerHTML='';return}
  const p=S.v,a=p.activities||{};el.hidden=false;

@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="dark">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F2F4F8">
+<meta name="theme-color" content="#0C0E13">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Hi Com ing?">
 <title>Hi Com ing? — HICOM activities</title>
@@ -16,7 +16,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
 /* NFR21: all design tokens live here */
-:root{--bg:#F2F4F8;--card:#fff;--ink:#14213D;--mute:#58647F;--line:#DDE2EC;--acc:#3D5AFE;--onacc:#fff;--tag:#FFD23F;--bad:#C62828;--r:16px;--g:16px;--f:'Bricolage Grotesque',system-ui,sans-serif}
+:root{color-scheme:dark;--bg:#0C0E13;--card:#14171F;--ink:#ECEEF3;--mute:#8B92A5;--line:#232836;--acc:#8FA2FF;--onacc:#0C0E13;--tag:#FFD23F;--bad:#FF8A80;--r:16px;--g:16px;--f:'Bricolage Grotesque',system-ui,sans-serif}
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -27,7 +27,7 @@ button:not(:disabled):active,.btn:active,.btn2:active{transform:scale(.98)}
 
 main{max-width:720px;margin:0 auto;padding:22px var(--g) calc(108px + env(safe-area-inset-bottom))}
 .brandbar{display:flex;align-items:center;gap:11px;margin:0 0 26px}
-.brandmark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--ink);color:#fff;font-weight:800;letter-spacing:-.06em;box-shadow:0 6px 16px #14213d20}
+.brandmark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:800;letter-spacing:-.06em}
 .brandcopy{display:flex;flex-direction:column;line-height:1.15}
 .brandcopy strong{font-size:1.02rem;font-weight:800;letter-spacing:-.03em}
 .brandcopy span{margin-top:4px;color:var(--mute);font-size:.68rem;font-weight:800;letter-spacing:.13em}
@@ -38,16 +38,15 @@ p{margin:.3em 0}.mute{color:var(--mute)}.pre{white-space:pre-wrap}
 button,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 .btn,.btn2,.link,.seg button{min-height:44px;min-width:44px;border-radius:12px;padding:0 18px;border:2px solid var(--acc)}
-.btn{background:var(--acc);color:var(--onacc);font-weight:700;box-shadow:0 5px 12px #3d5afe22}
+.btn{background:var(--acc);color:var(--onacc);font-weight:700}
 .btn2{background:transparent;color:var(--acc);font-weight:600;display:inline-flex;align-items:center;text-decoration:none}
 .link{background:none;border:0;color:var(--acc);text-decoration:underline;padding:0 8px}
 button:disabled{opacity:.45;cursor:not-allowed}.card:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 label{display:block;margin:12px 0;font-weight:600}
 input:not([type=file]),textarea{display:block;width:100%;min-height:44px;margin-top:4px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
-.card{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;color:inherit;text-decoration:none;box-shadow:0 3px 12px #14213d06}
-.card:hover{transform:translateY(-2px);box-shadow:0 9px 24px #14213d0c;border-color:#c5cfe5}
+.card{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;color:inherit;text-decoration:none}
+.card:hover{border-color:#3a4152}
 .card h3{margin:.15em 0 .45em}
-.tile{border-radius:14px;background:#e8edff;color:#3049d8}
 
 .card.off{opacity:.6}
 .tile{flex:none;width:58px;height:64px;border-radius:12px;background:var(--tag);color:#14213D;display:grid;place-content:center;text-align:center;font-size:.8rem;line-height:1.1}
@@ -67,57 +66,37 @@ input:not([type=file]),textarea{display:block;width:100%;min-height:44px;margin-
 .who{display:flex;gap:14px;align-items:center}
 nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:5px 4px env(safe-area-inset-bottom);z-index:20}
 nav button{min-height:54px;background:none;border:0;border-radius:12px;color:var(--mute);font-weight:700;font-size:.76rem}
-nav button.on{color:var(--acc);background:#3d5afe0d;box-shadow:none}
+nav button.on{color:var(--acc);background:none;box-shadow:none}
 .hero{font-size:clamp(3.4rem,18vw,6rem);font-weight:800;letter-spacing:-.04em;line-height:.95;margin:20px 0 12px}
 .hero span{background:var(--tag);color:#14213D;padding:0 .12em;border-radius:.16em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .lede{font-size:1.15rem;color:var(--mute);margin-bottom:24px}
 /* HICOM welcome and activity dashboard */
-.auth-main{min-height:100svh;max-width:100%;padding:0;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);background:#f7f8fc}
-.auth-art{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:100%;padding:clamp(28px,5vw,64px);color:#fff;background:radial-gradient(ellipse at 80% 15%,#536dff 0,transparent 34%),linear-gradient(145deg,#101a38 0%,#172c62 58%,#3049d8 100%)}
-.auth-art:before,.auth-art:after{content:"";position:absolute;border:1px solid #ffffff26;border-radius:50%;pointer-events:none}
-.auth-art:before{width:420px;height:420px;right:-140px;top:20%;box-shadow:0 0 0 42px #ffffff08,0 0 0 84px #ffffff06}
-.auth-art:after{width:230px;height:230px;right:16%;bottom:-100px;background:#ffffff08}
-.auth-art>*{position:relative;z-index:1}
-.auth-art .brandmark{background:#fff;color:#17234b;box-shadow:none}
-.auth-art .brandcopy span{color:#c7d2ff}
-.auth-kicker{font-size:.74rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c7d2ff}
-.auth-title{max-width:560px;font-size:clamp(3.5rem,7.5vw,7rem);line-height:.92;letter-spacing:-.075em;font-weight:800;margin:22px 0}
-.auth-title em{font-style:normal;color:#ffda5c}
-.auth-description{max-width:380px;color:#d9e0ff;font-size:1.08rem}
-.auth-orbit{width:min(100%,380px);aspect-ratio:1;margin:24px auto 0;display:grid;place-items:center}
-.orbit-ring{width:100%;height:100%;border:1px solid #ffffff28;border-radius:50%;display:grid;place-items:center;box-shadow:0 0 0 26px #ffffff06,0 0 0 52px #ffffff04;transform:rotate(-12deg)}
-.orbit-card{width:78%;padding:20px;border-radius:22px;background:#ffffffed;color:#14213d;box-shadow:0 22px 65px #07112d55;transform:rotate(12deg)}
-.orbit-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.75rem;font-weight:800;color:#58647f}
-.orbit-date{display:flex;gap:12px;align-items:center;margin:18px 0}
-.orbit-date strong{font-size:2rem;line-height:1;color:#3049d8}
-.orbit-dots{display:flex;align-items:center;margin-top:14px}
-.orbit-dots span{width:29px;height:29px;border-radius:50%;border:2px solid white;background:#ffda5c;margin-right:-7px;display:grid;place-items:center;font-size:.65rem;font-weight:800}
-.auth-panel{display:grid;place-items:center;padding:clamp(24px,5vw,72px)}
-.auth-box{width:min(100%,390px)}
-.auth-box h2{font-size:2.2rem;margin:0 0 8px;letter-spacing:-.055em}
-.auth-box .sub{color:var(--mute);margin-bottom:28px}
-.auth-box label{margin:18px 0;font-size:.9rem}
-.auth-box input:not([type=file]){margin-top:8px;min-height:52px;border-radius:14px;padding:12px 15px;background:#fff;border-color:#dce2ef}
-.auth-submit{min-height:52px;width:100%;border:0;border-radius:14px;background:#3049d8;color:#fff;font-weight:800;box-shadow:0 9px 20px #3049d82b}
-.auth-foot{margin-top:18px;text-align:center;font-size:.82rem;color:var(--mute)}
+.auth-main{min-height:100svh;max-width:none;padding:24px;display:grid;place-items:center}
+.auth-box{width:min(100%,340px);text-align:center}
+.auth-logo{border-radius:16px;margin-bottom:18px}
+.auth-box h1{font-size:1.5rem;font-weight:800;letter-spacing:-.03em;margin:0 0 32px}
+.auth-box label{display:block;text-align:left;margin:0;font-size:.85rem;font-weight:400;color:var(--mute)}
+.auth-box input{min-height:52px;margin:8px 0 12px;border-radius:14px;font-size:1rem}
+.auth-submit{min-height:52px;width:100%;border:0;border-radius:14px;background:var(--acc);color:var(--onacc);font-weight:700}
+.auth-foot{margin-top:16px;font-size:.8rem;color:var(--mute)}
 .dash-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:8px 0 22px}
 .dash-eyebrow{font-size:.74rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--acc);margin-bottom:5px}
 .dash-title{font-size:clamp(2rem,7vw,2.65rem);letter-spacing:-.06em;margin:0}
 .dash-sub{color:var(--mute);margin-top:7px}
-.create-fab{flex:none;width:48px;height:48px;min-width:48px;border:0;border-radius:16px;background:var(--acc);color:white;font-size:1.7rem;box-shadow:0 8px 18px #3d5afe2b}
+.create-fab{flex:none;width:48px;height:48px;min-width:48px;border:0;border-radius:16px;background:var(--acc);color:var(--onacc);font-size:1.7rem}
 .stats-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 24px}
 .stat-card{min-width:0;border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--card)}
 .stat-num{font-size:1.55rem;line-height:1.1;font-weight:800;letter-spacing:-.05em}
 .stat-label{font-size:.76rem;color:var(--mute);margin-top:5px}
 .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:24px 0 10px}
 .section-head h3{margin:0;font-size:1.12rem}
-.next-banner{padding:17px;border-radius:20px;background:linear-gradient(120deg,#14213d,#293f88);color:#fff;margin:0 0 24px;box-shadow:0 12px 26px #14213d16}
-.next-banner .next-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#c8d3ff}
+.next-banner{padding:17px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin:0 0 24px}
+.next-banner .next-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)}
 .next-banner h3{font-size:1.22rem;margin:8px 0}
-.next-banner p{color:#e0e6ff;font-size:.88rem}
+.next-banner p{color:var(--mute);font-size:.88rem}
 .activity-list .card{margin:10px 0}
-.activity-list .tile{background:#e9edff;color:#3049d8}
-@media(max-width:700px){.auth-main{display:block;min-height:100svh;background:var(--bg)}.auth-art{min-height:310px;padding:24px 22px 30px}.auth-art .auth-title{font-size:clamp(3.3rem,15vw,5rem);margin:18px 0 12px}.auth-art .auth-description{font-size:.94rem;max-width:310px}.auth-art .auth-orbit{display:none}.auth-art .auth-bottom{display:none}.auth-panel{padding:30px 22px 46px;place-items:start center}.auth-box{max-width:460px}.auth-box h2{font-size:1.9rem}.stats-row{gap:8px}.stat-card{padding:12px}.stat-num{font-size:1.35rem}.dash-head{margin-top:4px}}
+.activity-list .tile{background:#1C2236;color:var(--acc)}
+@media(max-width:700px){.stats-row{gap:8px}.stat-card{padding:12px}.stat-num{font-size:1.35rem}.dash-head{margin-top:4px}}
 @media(max-width:360px){.stats-row{grid-template-columns:1fr}.stat-card{display:flex;align-items:center;justify-content:space-between}.stat-label{margin:0}}
 
 #viewer{position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
@@ -125,7 +104,7 @@ nav button.on{color:var(--acc);background:#3d5afe0d;box-shadow:none}
 .vbox>img{width:100%;max-height:60vh;object-fit:contain;background:#000;border-radius:var(--r);cursor:zoom-in}
 .vbox>img.full{position:fixed;inset:0;max-height:none;height:100%;border-radius:0;z-index:60;cursor:zoom-out}
 .cm{list-style:none;padding:0}.cm li{padding:8px 0;border-bottom:1px solid var(--line)}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;z-index:70;max-width:90%;box-shadow:0 10px 28px #14213d30;animation:toast-in .22s ease-out}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;z-index:70;max-width:90%;animation:toast-in .22s ease-out}
 @keyframes toast-in{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
 @media(min-width:600px){main{padding-top:30px}.card{padding:18px}.grid{gap:10px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
@@ -187,7 +166,8 @@ const empty=(t,d,v,b)=>`<div class="empty"><h3>${t}</h3><p class="mute">${d}</p>
 const av=p=>p?.avatar_url?`<img class="av" src="${esc(p.avatar_url)}" alt="">`:`<span class="av" aria-hidden="true">${esc((p?.name||'?')[0])}</span>`;
 const local=i=>{const d=new Date(i);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
 
-function authView(){return `<main class="auth-main"><section class="auth-art"><div class="brandbar"><div class="brandmark">HC</div><div class="brandcopy"><strong>Hi Com ing?</strong><span>HICOM COMMUNITY</span></div></div><div><div class="auth-kicker">Your people. Your plans.</div><h1 class="auth-title">Good times<br>start <em>here.</em></h1><p class="auth-description">One place for HICOM to make plans, show up, and keep the memories.</p><div class="auth-orbit" aria-hidden="true"><div class="orbit-ring"><div class="orbit-card"><div class="orbit-top"><span>HICOM HANGOUT</span><span>✦ UPCOMING</span></div><div class="orbit-date"><strong>27</strong><div><b>Something fun?</b><p class="mute" style="font-size:.8rem">The best plans are shared.</p></div></div><div class="orbit-dots"><span>H</span><span>C</span><span>I</span><span>+</span></div></div></div></div></div><div class="auth-bottom mute" style="color:#c7d2ff;font-size:.8rem">Made for the group chat that makes it happen.</div></section><section class="auth-panel"><div class="auth-box"><div class="dash-eyebrow">Welcome to the crew</div><h2>Who’s joining us?</h2><p class="sub">Enter your name to get into the HICOM board.</p><form data-f="auth"><label for="login-name">Your name<input id="login-name" name="name" required maxlength="40" autocomplete="name" placeholder="e.g. Irzad" autofocus></label><button class="auth-submit" type="submit">Enter HICOM <span aria-hidden="true">→</span></button></form><p class="auth-foot">No password needed · This device remembers you</p></div></section></main>`}
+function authView(){return `<main class="auth-main"><form class="auth-box" data-f="auth"><img class="auth-logo" src="icon-192.png" alt="" width="64" height="64"><h1>Hi Com ing?</h1><label for="login-name">Your name</label><input id="login-name" name="name" required maxlength="40" autocomplete="name" placeholder="e.g. Irzad" autofocus><button class="auth-submit" type="submit">Enter</button><p class="auth-foot">No password. This device remembers you.</p></form></main>`}
+
 
 function card(a){const d=new Date(a.starts_at),x=a.status==='cancelled';
 return `<a class="card${x?' off':''}" href="#/a/${a.id}"><div class="tile"><b>${d.getDate()}</b>${d.toLocaleString([],{month:'short'})}</div><div><h3>${esc(a.title)}</h3><p class="mute">${fmt(d)}${a.place?', '+esc(a.place):''}</p><p>${x?'<span class="pill">Cancelled</span>':cnt(a,'join')+' joining'}</p></div></a>`}
@@ -199,7 +179,7 @@ const addBtn=a=>`<label class="btn2">Add photos<input type="file" accept="image/
 function feed(){const n=Date.now(),t=a=>+new Date(a.starts_at),u=S.acts.filter(a=>t(a)>=n&&a.status!=='cancelled').sort((a,b)=>t(a)-t(b)),p=S.acts.filter(a=>t(a)<n).sort((a,b)=>t(b)-t(a)),joined=S.acts.filter(a=>a.responses?.some(r=>r.user_id===U()&&r.answer==='join')).length,coming=u.length,next=u[0],name=S.me?.name?.trim().split(/\s+/)[0]||'there';
 return `<div class="dash-head"><div><div class="dash-eyebrow">HICOM COMMUNITY</div><h2 class="dash-title">Hey, ${esc(name)}.</h2><p class="dash-sub">What are we getting up to?</p></div><button class="create-fab" data-a="tab" data-v="new" aria-label="Create activity" title="Create activity">+</button></div>
 <div class="stats-row"><div class="stat-card"><div class="stat-num">${coming}</div><div class="stat-label">Coming up</div></div><div class="stat-card"><div class="stat-num">${joined}</div><div class="stat-label">You’re joining</div></div><div class="stat-card"><div class="stat-num">${S.pics.length}</div><div class="stat-label">Shared photos</div></div></div>
-${next?`<div class="next-banner"><div class="next-label">✦ Next on the board</div><h3>${esc(next.title)}</h3><p>${fmt(next.starts_at)}${next.place?' · '+esc(next.place):''}</p><p>${cnt(next,'join')} joining${next.capacity?' · '+Math.max(0,next.capacity-cnt(next,'join'))+' spots left':''}</p><button class="btn2" style="background:#fff;color:#263e96;border-color:#fff;margin-top:10px" data-a="openact" data-v="${next.id}">View activity →</button></div>`:''}
+${next?`<div class="next-banner"><div class="next-label">✦ Next on the board</div><h3>${esc(next.title)}</h3><p>${fmt(next.starts_at)}${next.place?' · '+esc(next.place):''}</p><p>${cnt(next,'join')} joining${next.capacity?' · '+Math.max(0,next.capacity-cnt(next,'join'))+' spots left':''}</p><button class="btn2" style="margin-top:10px" data-a="openact" data-v="${next.id}">View activity →</button></div>`:''}
 <div class="section-head"><h3>Upcoming activities</h3><span class="mute" style="font-size:.82rem">${u.length} ${u.length===1?'event':'events'}</span></div>
 <div class="activity-list">${u.length?u.map(card).join(''):empty('Nothing planned yet','Be the one who gets the group together.','new','Create an activity')}</div>
 ${p.length?`<div class="section-head"><h3>Past activities</h3><span class="mute" style="font-size:.82rem">${p.length} ${p.length===1?'event':'events'}</span></div><div class="activity-list">${p.map(card).join('')}</div>`:''}`}

@@ -55,7 +55,29 @@ input:not([type=file]),textarea{display:block;width:100%;min-height:44px;margin-
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
 .seg button{background:transparent;color:var(--ink);border-color:var(--line);padding:0 6px}
 .seg button.on{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:600}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.seg{gap:10px;margin:22px 0 12px}
+.seg button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:80px;border-width:1.5px;border-radius:18px;font-weight:600;font-size:.95rem}
+.seg button.on{font-weight:700}
+.ibtn{width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center}
+.dtop{display:flex;align-items:center;justify-content:space-between;margin:0 0 18px}
+.dact{display:flex;gap:10px}
+.dtitle{font-size:clamp(1.8rem,7vw,2.4rem);letter-spacing:-.04em;margin:0 0 14px}
+.dmeta{display:grid;gap:8px;margin:0 0 16px}
+.dmeta .row{display:flex;align-items:center;gap:10px;margin:0;color:var(--mute)}
+.dmeta .row svg{flex:none}.dmeta .row.on{color:var(--ink);font-weight:700}
+.ddet{margin:0 0 4px;line-height:1.55}
+.dcount{margin:0 0 4px}.dnames{margin:0 0 4px;font-size:.92rem}
+.rel{position:relative}.rel.block{margin:16px 0 28px}
+.btn2.wide{width:100%;justify-content:center;gap:8px;border-width:1.5px;border-radius:14px;min-height:50px}
+.menu{position:absolute;right:0;top:calc(100% + 8px);min-width:210px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px;z-index:30;box-shadow:0 14px 34px #000a}
+.menu.wide{left:0;right:0}
+.menu button,.menu a{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;padding:0 12px;border:0;border-radius:12px;background:none;color:var(--ink);font-weight:600;text-align:left;text-decoration:none}
+.menu button:active,.menu a:active{background:var(--line)}
+.menu .danger{color:var(--bad)}
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 10px}.sec h3{margin:0}
+.addtile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1.5px dashed var(--line);background:transparent;color:var(--mute);font-size:.8rem;text-align:center;cursor:pointer}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
 .th{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--line)}
 .th>button:first-child{all:unset;display:block;width:100%;height:100%;cursor:pointer}
 .th img{width:100%;height:100%;object-fit:cover;display:block}
@@ -180,8 +202,8 @@ function authView(){return `<main class="auth-main"><form class="auth-box" data-
 function card(a){const d=new Date(a.starts_at),x=a.status==='cancelled';
 return `<a class="card${x?' off':''}" href="#/a/${a.id}"><div class="tile"><b>${d.getDate()}</b>${d.toLocaleString([],{month:'short'})}</div><div><h3>${esc(a.title)}</h3><p class="mute">${fmt(d)}${a.place?', '+esc(a.place):''}</p><p>${x?'<span class="pill">Cancelled</span>':cnt(a,'join')+' joining'}</p></div></a>`}
 
-function thumbs(a,manage){if(!a.pictures.length)return'';const adm=S.me?.is_admin;
-return `<div class="grid">${a.pictures.map(p=>`<div class="th"><button data-a="view" data-v="${p.id}"><img loading="lazy" src="${db.url(p.path)}" alt="Photo from ${esc(a.title)}"></button>${manage&&(a.host_id===U()||p.uploader_id===U()||adm)?`<button class="x" data-a="rmpic" data-v="${p.id}" aria-label="Remove photo">×</button>`:''}</div>`).join('')}</div>`}
+function thumbs(a,manage,extra=''){if(!a.pictures.length&&!extra)return'';const adm=S.me?.is_admin;
+return `<div class="grid">${a.pictures.map(p=>`<div class="th"><button data-a="view" data-v="${p.id}"><img loading="lazy" src="${db.url(p.path)}" alt="Photo from ${esc(a.title)}"></button>${manage&&(a.host_id===U()||p.uploader_id===U()||adm)?`<button class="x" data-a="rmpic" data-v="${p.id}" aria-label="Remove photo">×</button>`:''}</div>`).join('')}${extra}</div>`}
 const addBtn=a=>`<label class="btn2">Add photos<input type="file" accept="image/*" multiple hidden data-up="${a.id}"></label>`;
 
 function feed(){const n=Date.now(),t=a=>+new Date(a.starts_at),u=S.acts.filter(a=>t(a)>=n&&a.status!=='cancelled').sort((a,b)=>t(a)-t(b)),p=S.acts.filter(a=>t(a)<n).sort((a,b)=>t(b)-t(a)),joined=S.acts.filter(a=>a.responses?.some(r=>r.user_id===U()&&r.answer==='join')).length,coming=u.length,next=u[0],name=S.me?.name?.trim().split(/\s+/)[0]||'there';
@@ -192,21 +214,33 @@ ${next?`<div class="next-banner"><div class="next-label">✦ Next on the board</
 <div class="activity-list">${u.length?u.map(card).join(''):empty('Nothing planned yet','Be the one who gets the group together.','new','Create an activity')}</div>
 ${p.length?`<div class="section-head"><h3>Past activities</h3><span class="mute" style="font-size:.82rem">${p.length} ${p.length===1?'event':'events'}</span></div><div class="activity-list">${p.map(card).join('')}</div>`:''}`}
 
+const ico=(p,s=22,w=1.8)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const P={back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',share:'<path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
+dots:'<circle cx="5" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="19" cy="12" r="1.7" fill="currentColor"/>',
+edit:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/>',ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
+check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16 9.5"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5M12 16.7h.01"/>',no:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+calplus:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v4M10 15h4"/>',pin:'<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',plus:'<path d="M12 5v14M5 12h14"/>'};
 function detail(){
+ const bk=`<button class="ibtn" data-a="tab" data-v="feed" aria-label="Back to activities">${ico(P.back)}</button>`;
  const a=S.acts.find(x=>x.id===S.aid);
- if(!a)return `<button class="link" data-a="tab" data-v="feed">Back to activities</button>${empty('Activity not found','It may have been deleted.','feed','See activities')}`;
+ if(!a)return `<div class="dtop">${bk}</div>${empty('Activity not found','It may have been deleted.','feed','See activities')}`;
  const d=new Date(a.starts_at),my=a.responses.find(r=>r.user_id===U())?.answer,host=a.host_id===U(),adm=S.me?.is_admin,x=a.status==='cancelled',j=a.responses.filter(r=>r.answer==='join'),past=d<Date.now(),full=a.capacity&&j.length>=a.capacity&&my!=='join';
  const z=v=>new Date(v).toISOString().replace(/[-:]|\.\d{3}/g,''),end=new Date(+d+72e5);
  const g=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(a.title)}&dates=${z(d)}/${z(end)}&location=${encodeURIComponent(a.place||'')}`;
- return `<button class="link" data-a="tab" data-v="feed">Back to activities</button><h2>${esc(a.title)}</h2>${x?'<p><span class="pill">Cancelled</span></p>':''}
-<p><b>${fmt(d)}</b></p><p class="mute">${a.place?esc(a.place)+'. ':''}Hosted by ${esc(a.profiles?.name)}</p><p class="pre">${esc(a.details)}</p>
-${x?'':`<div class="seg" role="group" aria-label="Your response">${[['join','Joining'],['maybe','Maybe'],['no','Can’t go']].map(([k,l])=>`<button class="${my===k?'on':''}" data-a="rsvp" data-v="${k}" data-id="${a.id}" ${k==='join'&&full?'disabled':''}>${l}</button>`).join('')}</div>${full?'<p class="mute">This activity is full.</p>':''}`}
-<p>${j.length}${a.capacity?' of '+a.capacity:''} joining, ${cnt(a,'no')} can’t go, ${cnt(a,'maybe')} maybe</p>
-${j.length?`<p class="mute">${j.map(r=>esc(r.profiles?.name)).join(', ')}</p>`:''}
-${my==='join'&&!x?`<p><button class="btn2" data-a="ics" data-v="${a.id}">Add to calendar (.ics)</button> <a class="btn2" target="_blank" rel="noopener" href="${g}">Google Calendar</a></p>`:''}
-<p><button class="btn2" data-a="share">Share link</button> ${host||adm?`<button class="btn2" data-a="delact" data-v="${a.id}">Delete</button>`:''}</p>
-${host&&!x?`<p><button class="btn2" data-a="edit" data-v="${a.id}">Edit</button> <button class="btn2" data-a="cancel" data-v="${a.id}">Cancel activity</button></p>`:''}
-<h3>Photos</h3>${a.pictures.length?'':'<p class="mute">No photos yet.</p>'}${thumbs(a,true)}${host||(past&&my==='join')?addBtn(a):''}`}
+ const more=host||adm?`<div class="rel"><button class="ibtn" data-a="menu" aria-label="More options" aria-haspopup="true">${ico(P.dots)}</button><div class="menu" hidden>${host&&!x?`<button data-a="edit" data-v="${a.id}">${ico(P.edit,20)}Edit</button><button data-a="cancel" data-v="${a.id}">${ico(P.ban,20)}Cancel activity</button>`:''}<button class="danger" data-a="delact" data-v="${a.id}">${ico(P.trash,20)}Delete</button></div></div>`:'';
+ const canUp=host||(past&&my==='join');
+ const tile=canUp?`<label class="th addtile">${ico(P.plus,24)}<span>Add photos</span><input type="file" accept="image/*" multiple hidden data-up="${a.id}"></label>`:'';
+ const R=[['join','Joining',P.check],['maybe','Maybe',P.help],['no','Can’t go',P.no]];
+ return `<div class="dtop">${bk}<div class="dact"><button class="ibtn" data-a="share" aria-label="Share link">${ico(P.share)}</button>${more}</div></div>
+<h2 class="dtitle">${esc(a.title)}</h2>${x?'<p><span class="pill">Cancelled</span></p>':''}
+<div class="dmeta"><p class="row on">${ico(P.calplus,18)}<span>${fmt(d)}</span></p>${a.place?`<p class="row">${ico(P.pin,18)}<span>${esc(a.place)}</span></p>`:''}<p class="row">${ico(IC.profile,18)}<span>Hosted by ${esc(a.profiles?.name)}</span></p></div>
+${a.details?`<p class="pre ddet">${esc(a.details)}</p>`:''}
+${x?'':`<div class="seg" role="group" aria-label="Your response">${R.map(([k,l,i])=>`<button class="${my===k?'on':''}" aria-pressed="${my===k}" data-a="rsvp" data-v="${k}" data-id="${a.id}" ${k==='join'&&full?'disabled':''}>${ico(i,26)}${l}</button>`).join('')}</div>${full?'<p class="mute">This activity is full.</p>':''}`}
+<p class="mute dcount">${j.length}${a.capacity?' of '+a.capacity:''} joining, ${cnt(a,'maybe')} maybe, ${cnt(a,'no')} can’t go</p>
+${j.length?`<p class="mute dnames">${j.map(r=>esc(r.profiles?.name)).join(', ')}</p>`:''}
+${x?'':`<div class="rel block"><button class="btn2 wide" data-a="menu" aria-haspopup="true">${ico(P.calplus,20)}Add to calendar</button><div class="menu wide" hidden><button data-a="ics" data-v="${a.id}">Apple or Outlook (.ics)</button><a target="_blank" rel="noopener" href="${g}">Google Calendar</a></div></div>`}
+<div class="sec"><h3>Photos</h3>${a.pictures.length?`<span class="mute">${a.pictures.length}</span>`:''}</div>${a.pictures.length||canUp?thumbs(a,true,tile):'<p class="mute">No photos yet.</p>'}`}
 
 function form(){const a=S.edit||{};
 return `<h2>${a.id?'Edit activity':'New activity'}</h2><form data-f="act">
@@ -252,6 +286,7 @@ const A={
  tab:t=>go(t.dataset.v),
  openact:t=>{S.aid=t.dataset.v;history.pushState(null,'','#/a/'+S.aid);render();scrollTo(0,0)},
  rsvp:async t=>{await run(sb.from('responses').upsert({activity_id:t.dataset.id,user_id:U(),answer:t.dataset.v},{onConflict:'activity_id,user_id'}));await reload()},
+ menu:t=>{const m=t.parentElement.querySelector('.menu'),o=m.hidden;document.querySelectorAll('.menu').forEach(x=>x.hidden=true);m.hidden=!o},
  share:async()=>{const u=location.href;try{navigator.share?await navigator.share({url:u}):(await navigator.clipboard.writeText(u),toast('Link copied.'))}catch{}},
  ics:t=>{const a=S.acts.find(x=>x.id===t.dataset.v),z=v=>new Date(v).toISOString().replace(/[-:]|\.\d{3}/g,''),q=s=>String(s||'').replace(/[\\;,]/g,'\\$&').replace(/\n/g,'\\n');
   const f=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Hi Com ing?//EN','BEGIN:VEVENT','UID:'+a.id+'@hicoming','DTSTAMP:'+z(Date.now()),'DTSTART:'+z(a.starts_at),'DTEND:'+z(+new Date(a.starts_at)+72e5),'SUMMARY:'+q(a.title),'LOCATION:'+q(a.place),'DESCRIPTION:'+q(a.details),'END:VEVENT','END:VCALENDAR'].join('\r\n');
@@ -283,6 +318,7 @@ const F={
   await run(sb.from('profiles').update(row).eq('id',U()));await reload();toast('Saved.')}
 };
 document.addEventListener('click',async e=>{const t=e.target.closest('[data-a]'),f=t&&A[t.dataset.a];if(!f)return;try{await f(t,e)}catch(x){toast(x.message)}});
+document.addEventListener('click',e=>{if(e.target.closest('.menu')||!e.target.closest('.rel'))document.querySelectorAll('.menu').forEach(m=>m.hidden=true)});
 document.addEventListener('submit',async e=>{e.preventDefault();const f=e.target,b=f.querySelector('[type=submit]');b.disabled=true;try{await F[f.dataset.f](f)}catch(x){toast(x.message)}finally{b.disabled=false}}); // NFR16
 document.addEventListener('change',async e=>{const i=e.target;if(!i.dataset.up)return;try{await upload(i.dataset.up,i.files);await reload()}catch(x){toast(x.message)}i.value=''});
 const route=()=>{const m=location.hash.match(/^#\/a\/([\w-]+)/);S.aid=m?m[1]:null;if(S.aid){S.tab='feed';S.mod=false}S.edit=null;render();scrollTo(0,0)}; // FR10

@@ -136,10 +136,10 @@ const sb=supabase.createClient(CFG.URL,CFG.KEY);
 
 /* ---- 3. data layer (NFR22): the only code that talks to the backend ---- */
 const db={
- acts:()=>sb.from('activities').select('*,profiles(name),responses(user_id,answer,profiles(name)),pictures(id,path,uploader_id)'),
- pics:()=>sb.from('pictures').select('*,activities(title,starts_at,host_id,profiles(name)),comments(id)').order('created_at',{ascending:false}),
+ acts:()=>sb.from('activities').select('*,profiles!host_id(name),responses(user_id,answer,profiles!user_id(name)),pictures(id,path,uploader_id)'),
+ pics:()=>sb.from('pictures').select('*,activities(title,starts_at,host_id,profiles!host_id(name)),comments(id)').order('created_at',{ascending:false}),
  me:()=>sb.from('profiles').select('*').eq('id',U()).single(),
- comments:id=>sb.from('comments').select('*,profiles(name)').eq('picture_id',id).order('created_at'),
+ comments:id=>sb.from('comments').select('*,profiles!user_id(name)').eq('picture_id',id).order('created_at'),
  url:p=>sb.storage.from('pics').getPublicUrl(p).data.publicUrl
 };
 async function load(){

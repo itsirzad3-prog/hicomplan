@@ -120,14 +120,9 @@ const empty=(t,d,v,b)=>`<div class="empty"><h3>${t}</h3><p class="mute">${d}</p>
 const av=p=>p?.avatar_url?`<img class="av" src="${esc(p.avatar_url)}" alt="">`:`<span class="av" aria-hidden="true">${esc((p?.name||'?')[0])}</span>`;
 const local=i=>{const d=new Date(i);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
 
-function authView(){const m=S.mode,up=m==='up',rs=m==='reset';
-return `<main><img src="icon-192.png" alt="" width="72" height="72" style="border-radius:16px;margin-top:24px"><h1 class="hero"><span>Who’s</span> in?</h1><p class="lede">Plan something, see who’s coming, keep the photos.</p>
-<form data-f="auth">${up?'<label>Display name<input name="name" required maxlength="40" autocomplete="name"></label>':''}
-<label>Email<input name="email" type="email" required autocomplete="email"></label>
-${rs?'':`<label>Password<input name="password" type="password" required minlength="8" autocomplete="${up?'new':'current'}-password"></label>`}
-<button class="btn" type="submit" style="width:100%">${rs?'Send reset link':up?'Create account':'Log in'}</button></form>
-${rs?'':'<p style="margin-top:12px"><button class="btn2" style="width:100%;justify-content:center" data-a="google">Continue with Google</button></p>'}
-<p>${up||rs?'<button class="link" data-a="mode" data-v="in">Log in instead</button>':'<button class="link" data-a="mode" data-v="up">Create an account</button><button class="link" data-a="mode" data-v="reset">Forgot password?</button>'}</p></main>`}
+function authView(){return `<main><img src="icon-192.png" alt="" width="72" height="72" style="border-radius:16px;margin-top:24px"><h1 class="hero"><span>Who’s</span> in?</h1><p class="lede">Plan something, see who’s coming, keep the photos.</p>
+<form data-f="auth"><label>Your name<input name="name" required maxlength="40" autocomplete="name" placeholder="How should people see you?"></label><button class="btn" type="submit" style="width:100%">Enter</button></form>
+<p class="mute">No password needed. This device remembers you.</p></main>`}
 
 function card(a){const d=new Date(a.starts_at),x=a.status==='cancelled';
 return `<a class="card${x?' off':''}" href="#/a/${a.id}"><div class="tile"><b>${d.getDate()}</b>${d.toLocaleString([],{month:'short'})}</div><div><h3>${esc(a.title)}</h3><p class="mute">${fmt(d)}${a.place?', '+esc(a.place):''}</p><p>${x?'<span class="pill">Cancelled</span>':cnt(a,'join')+' joining'}</p></div></a>`}
@@ -174,8 +169,7 @@ function profile(){const m=S.me||{},u=U(),h=S.acts.filter(a=>a.host_id===u),j=S.
 return `<div class="who">${av(m)}<div><h2 style="margin:0">${esc(m.name)}</h2><p class="mute">${h.length} hosted, ${j.length} joined</p></div></div>
 <details><summary>Edit profile</summary><form data-f="prof"><label>Display name<input name="name" required maxlength="40" value="${esc(m.name)}"></label><label>Photo (optional)<input type="file" name="photo" accept="image/*"></label><button class="btn" type="submit">Save changes</button></form></details>
 ${m.is_admin?'<p><button class="btn2" data-a="mod">Open moderation</button></p>':''}
-<h3>Hosted</h3>${h.map(wp).join('')||'<p class="mute">Nothing hosted yet.</p>'}<h3>Joined</h3>${j.map(wp).join('')||'<p class="mute">Nothing joined yet.</p>'}
-<p><button class="link" data-a="out">Log out</button></p>`}
+<h3>Hosted</h3>${h.map(wp).join('')||'<p class="mute">Nothing hosted yet.</p>'}<h3>Joined</h3>${j.map(wp).join('')||'<p class="mute">Nothing joined yet.</p>'}`}
 
 function modView(){return `<button class="link" data-a="tab" data-v="profile">Back to profile</button><h2>Moderation</h2>`+(S.rep.length?S.rep.map(r=>{const p=S.pics.find(x=>x.id===r.target_id);
 return `<div class="card" style="display:block"><p><b>Reported ${r.kind}</b>: ${esc(r.reason)}</p>${r.kind==='picture'?(p?`<div class="grid"><div class="th"><img src="${db.url(p.path)}" alt="Reported photo"></div></div>`:'<p class="mute">Photo already removed.</p>'):`<p class="pre">${esc(r.c?.text||'Comment already removed.')}</p>`}<button class="btn" data-a="resolve" data-v="${r.id}" data-rm="1">Remove ${r.kind}</button> <button class="btn2" data-a="resolve" data-v="${r.id}">Dismiss</button></div>`}).join(''):'<div class="empty"><h3>No reports</h3><p class="mute">Nothing needs review.</p></div>')}
@@ -198,9 +192,6 @@ const go=t=>{S.tab=t;S.aid=null;S.edit=null;S.mod=false;history.replaceState(nul
 const reload=async()=>{await load();render()};
 const A={
  tab:t=>go(t.dataset.v),
- mode:t=>{S.mode=t.dataset.v;render()},
- google:()=>run(sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}})),
- out:()=>sb.auth.signOut(),
  rsvp:async t=>{await run(sb.from('responses').upsert({activity_id:t.dataset.id,user_id:U(),answer:t.dataset.v},{onConflict:'activity_id,user_id'}));await reload()},
  share:async()=>{const u=location.href;try{navigator.share?await navigator.share({url:u}):(await navigator.clipboard.writeText(u),toast('Link copied.'))}catch{}},
  ics:t=>{const a=S.acts.find(x=>x.id===t.dataset.v),z=v=>new Date(v).toISOString().replace(/[-:]|\.\d{3}/g,''),q=s=>String(s||'').replace(/[\\;,]/g,'\\$&').replace(/\n/g,'\\n');
@@ -221,10 +212,7 @@ const A={
   await run(sb.from('reports').delete().eq('id',r.id));S.rep=S.rep.filter(x=>x.id!==r.id);await load();render()}
 };
 const F={
- async auth(f){const v=Object.fromEntries(new FormData(f));
-  if(S.mode==='reset'){await run(sb.auth.resetPasswordForEmail(v.email,{redirectTo:location.origin+location.pathname}));return toast('Check your email for a reset link.')}
-  if(S.mode==='up'){const r=await run(sb.auth.signUp({email:v.email,password:v.password,options:{data:{name:v.name}}}));if(!r.session)toast('Check your email to confirm your account.')}
-  else await run(sb.auth.signInWithPassword({email:v.email,password:v.password}))},
+ async auth(f){const n=new FormData(f).get('name').trim();if(!n)return;await run(sb.auth.signInAnonymously({options:{data:{name:n}}}))},
  async act(f){const v=new FormData(f),row={title:v.get('title').trim(),starts_at:new Date(v.get('when')).toISOString(),place:v.get('place').trim(),details:v.get('details').trim(),capacity:+v.get('cap')||null};
   let id=S.edit?.id;
   if(id)await run(sb.from('activities').update(row).eq('id',id));else id=(await run(sb.from('activities').insert(row).select('id').single())).id;
@@ -243,7 +231,6 @@ addEventListener('hashchange',route);
 
 sb.auth.onAuthStateChange((ev,s)=>{
  S.user=s?.user||null;
- if(ev==='PASSWORD_RECOVERY'){const p=prompt('Choose a new password (at least 8 characters)');if(p)sb.auth.updateUser({password:p}).then(r=>toast(r.error?r.error.message:'Password updated.'))}
  setTimeout(async()=>{if(S.user){await load();live();route()}else render()},0);
 });
 </script>
